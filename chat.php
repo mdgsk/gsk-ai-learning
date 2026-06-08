@@ -95,14 +95,15 @@ function getCurrentConversationId()
 }
 
 
-function getConversations()
+function getAllConversations()
 {
     global $pdo;
 
     return $pdo->query("
         SELECT *
         FROM conversations
-        ORDER BY id DESC
+        WHERE deleted_at IS NULL
+        ORDER BY updated_at DESC
     ")->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -120,3 +121,46 @@ function createConversation($title = 'New Chat')
 
     return $pdo->lastInsertId();
 }
+
+
+function getConversation($conversationId)
+{
+    global $pdo;
+
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM conversations
+        WHERE id = :id
+        AND deleted_at IS NULL
+    ");
+
+    $stmt->execute([
+        'id' => $conversationId
+    ]);
+
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+
+function updateConversation($conversationId, array $fields)
+{
+    global $pdo;
+
+    $setParts = [];
+
+    foreach ($fields as $column => $value) {
+        $setParts[] = "$column = :$column";
+    }
+
+    $sql = "
+        UPDATE conversations
+        SET ".implode(', ', $setParts)."
+        WHERE id = :id
+    ";
+
+    $fields['id'] = $conversationId;
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($fields);
+}
+

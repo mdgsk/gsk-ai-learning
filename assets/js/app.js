@@ -1,4 +1,3 @@
-
 const form = document.getElementById('chat-form');
 const submitBtn = document.getElementById('submit-btn');
 const loadingMessage = document.getElementById('loading-message');
@@ -115,6 +114,84 @@ if (form) {
 }
 
 
+document.addEventListener('click', async event => {
+
+    const button = event.target;
+
+    if (!button.matches('.rename-btn, .delete-btn')) return;
+
+    const action = button.classList.contains('rename-btn')
+        ? 'rename'
+        : 'delete';
+
+    const conversationId = button.dataset.id;
+
+    const formData = new FormData();
+
+    formData.append('action', action);
+    formData.append('conversation_id', conversationId);
+
+    if (action === 'rename') {
+
+        const title = prompt('Enter new title');
+
+        if (!title) return;
+
+        formData.append('title', title.trim());
+    }
+
+    if (
+        action === 'delete' &&
+        !confirm('Delete this conversation?')
+    ) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            'conversation-action.php',
+            {
+                method: 'POST',
+                body: formData
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `HTTP Error: ${response.status}`
+            );
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(
+                data.message || 'Unknown error.'
+            );
+        }
+
+        if (action === 'delete') {
+            location.href = 'index.php';
+            return;
+        } else {
+            location.reload();
+            return;
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            error.message ||
+            'Something went wrong.'
+        );
+    }
+
+});
+
+
 function createChatCard(prompt, answer, timestamp, cardId = '')
 {
     return `
@@ -143,7 +220,6 @@ function createChatCard(prompt, answer, timestamp, cardId = '')
         </div>
     `;
 }
-
 
 
 function escapeHtml(text)

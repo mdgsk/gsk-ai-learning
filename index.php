@@ -13,7 +13,7 @@ $parsedown = new Parsedown();
 $parsedown->setSafeMode(true);
 $conversationId = getCurrentConversationId();
 
-$conversations = getConversations();
+$conversations = getAllConversations();
 $history = getChats($conversationId, 20, $currentChatId ?? null);
 
 $cssVersion = filemtime('assets/css/style.css');
@@ -41,9 +41,20 @@ $jsVersion = filemtime('assets/js/app.js');
 
             <h4>Chats</h4>
             <?php foreach ($conversations as $conversation): ?>
-                <a href="?conversation_id=<?= $conversation['id'] ?>" class="conversation-link <?= $conversation['id'] == $conversationId ? 'active' : '' ?>">
-                    <?= htmlspecialchars($conversation['title']) ?>
-                </a>
+
+                <div class="conversation-item">
+
+                    <a href="?conversation_id=<?= $conversation['id'] ?>" class="conversation-link <?= $conversation['id'] == $conversationId ? 'active' : '' ?>">
+                        <?= htmlspecialchars($conversation['title']) ?>
+                    </a>
+
+                    <div class="conversation-actions">
+                        <button class="rename-btn" data-id="<?= $conversation['id'] ?>">✏️</button>
+                        <button class="delete-btn" data-id="<?= $conversation['id'] ?>">🗑️</button>
+                    </div>
+
+                </div>
+
             <?php endforeach; ?>
 
         </div>

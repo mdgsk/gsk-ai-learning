@@ -301,3 +301,82 @@ body {
     margin-bottom: 16px;
 }
 
+
+/* .conversation-item {
+    position: relative;
+}
+
+.conversation-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 4px;
+}
+
+.conversation-item:hover .conversation-actions {
+    display: flex;
+}
+
+.rename-btn,
+.delete-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 2px;
+    font-size: 14px;
+}
+
+.conversation-item {
+    position: relative;
+}
+
+.conversation-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: none;
+}
+
+.conversation-item:hover .conversation-actions {
+    display: flex;
+} */
+
+
+.conversation-item {
+    position: relative;
+}
+
+.conversation-link {
+    display: block;
+    text-decoration: none;
+    color: var(--text);
+    padding: 8px 60px 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.conversation-actions {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    display: none;
+    gap: 4px;
+}
+
+.conversation-item:hover .conversation-actions {
+    display: flex;
+}
+
+.rename-btn,
+.delete-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 2px;
+    font-size: 13px;
+}
