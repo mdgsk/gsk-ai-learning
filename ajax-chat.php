@@ -10,62 +10,51 @@ require_once 'ai.php';
 $parsedown = new Parsedown();
 $parsedown->setSafeMode(true);
 
-$answer = '';
-$error = '';
+$answer = ''; $error = '';
+$conversationId = (int) ($_POST['conversation_id'] ?? 0);
 
+if (!$conversationId) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Conversation not selected.'
+    ]);
+    exit;
+}
 
-$prompt = trim(
-    $_POST['prompt'] ?? ''
-);
+$prompt = trim($_POST['prompt'] ?? '');
 
 if ($prompt === '') {
-
     echo json_encode([
         'success' => false,
         'error' => 'Please enter a question.'
     ]);
-
 } elseif (strlen($prompt) < 2) {
-
     echo json_encode([
         'success' => false,
         'error' => 'Question must be at least 2 characters long.'
     ]);
-
     exit;
 }
 
-$recentChats = getRecentChats(5);
+$recentChats = getRecentChats($conversationId, 5);
 
-$context = buildContext(
-    $recentChats
-);
+$context = buildContext($recentChats);
 
 $fullPrompt =
     SYSTEM_PROMPT
     . "\n\n"
     . $context
-    . "\nUser: "
-    . $prompt;
-
-// echo json_encode($fullPrompt); die;
-
-// sleep(3);
-
+    . "\n\nActual User Message:\n"
+    . $prompt
+    . "\n\nAssistant:";
 
 $startTime = microtime(true);
-
 $answer = askAi($fullPrompt);
-
-$timeTaken = round(
-    microtime(true) - $startTime,
-    2
-);
-
-// print_r($answer); die;
+$timeTaken = round(microtime(true) - $startTime, 2);
 
 if($answer['success']) {
     $currentChatId = saveChat(
+        $conversationId,
         $prompt,
         $answer['message'],
         $answer['provider'],
@@ -74,13 +63,8 @@ if($answer['success']) {
     );
 }
 
-$answer['html'] = $parsedown->text(
-    $answer['message']
-);
-
+$answer['html'] = $parsedown->text($answer['message']);
 $answer['time_taken'] = $timeTaken;
-
-// sending extra results
 $answer['prompt'] = $prompt;
 $answer['fullPrompt'] = $fullPrompt;
 

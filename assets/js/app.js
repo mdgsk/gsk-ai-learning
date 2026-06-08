@@ -1,3 +1,4 @@
+
 const form = document.getElementById('chat-form');
 const submitBtn = document.getElementById('submit-btn');
 const loadingMessage = document.getElementById('loading-message');
@@ -8,139 +9,142 @@ const promptInput = document.getElementById('prompt');
 
 let isProcessing = false;
 
-form.addEventListener('submit', async (event) => {
 
-    event.preventDefault();
+if (form) {
 
-    if (isProcessing) {
-        return;
-    }
-    isProcessing = true;
+    form.addEventListener('submit', async (event) => {
 
-    responseContainer.innerHTML = '';
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Thinking...';
-    loadingMessage.style.display = 'block';
+        event.preventDefault();
 
+        if (isProcessing) return;
+        isProcessing = true;
 
-    // thinking...
-    const promptText = promptInput.value.trim();
-    const tempId = 'temp-' + Date.now();
-    const timestamp = new Date().toLocaleString();
+        responseContainer.innerHTML = '';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Thinking...';
+        loadingMessage.style.display = 'block';
 
-    const thinkingCard = createChatCard(
-        promptText,
-        '<em>Thinking...</em>',
-        timestamp,
-        tempId
-    );
-    historyContainer.insertAdjacentHTML(
-        'afterbegin',
-        thinkingCard
-    );
-    const tempCard = document.getElementById(tempId);
+        // thinking...
+        const promptText = promptInput.value.trim();
+        const tempId = 'temp-' + Date.now();
+        const timestamp = new Date().toLocaleString();
 
-    try {
-
-        const formData = new FormData(form);
-
-        const response = await fetch(
-            'ajax-chat.php',
-            {
-                method: 'POST',
-                body: formData
-            }
+        const thinkingCard = createChatCard(
+            promptText,
+            '<em>Thinking...</em>',
+            timestamp,
+            tempId
         );
+        historyContainer.insertAdjacentHTML(
+            'afterbegin',
+            thinkingCard
+        );
+        const tempCard = document.getElementById(tempId);
 
-        const data = await response.json();
-        console.log(data);
+        try {
 
-        if (data.success) {
+            const formData = new FormData(form);
+
+            const response = await fetch(
+                'ajax-chat.php',
+                {
+                    method: 'POST',
+                    body: formData
+                }
+            );
+
+            const data = await response.json();
+            console.log(data);
 
             if (data.success) {
 
-                if (noHistoryMessage) {
-                    noHistoryMessage.remove();
+                if (data.success) {
+
+                    if (noHistoryMessage) {
+                        noHistoryMessage.remove();
+                    }
+
+                    tempCard.querySelector('.answer-content').innerHTML = data.html;
+                    tempCard.querySelector('.chat-meta').textContent = `${data.provider} | ${data.model} | ${data.timestamp}`;
+                    
+                    promptInput.value = '';
+                    promptInput.focus();
+
                 }
 
-                tempCard.querySelector('.answer-content').innerHTML = data.html;
+            } else {
+                tempCard.querySelector('.answer-content').innerHTML = `<div class="error-message">${data.message}</div>`;
                 tempCard.querySelector('.chat-meta').textContent = `${data.provider} | ${data.model} | ${data.timestamp}`;
-                
-                promptInput.value = '';
-                promptInput.focus();
-
             }
 
-        } else {
-            tempCard.querySelector('.answer-content').innerHTML = `<div class="error-message">${data.message}</div>`;
+        } catch (error) {
+
+            console.error(error);
+            tempCard.querySelector('.answer-content').innerHTML = `<div class="error-message">Something went wrong.</div>`;
             tempCard.querySelector('.chat-meta').textContent = `${data.provider} | ${data.model} | ${data.timestamp}`;
-        }
 
-    } catch (error) {
+        } finally {
 
-        console.error(error);
-        tempCard.querySelector('.answer-content').innerHTML = `<div class="error-message">Something went wrong.</div>`;
-        tempCard.querySelector('.chat-meta').textContent = `${data.provider} | ${data.model} | ${data.timestamp}`;
-
-    } finally {
-
-        loadingMessage.style.display = 'none';
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Ask AI';
-        isProcessing = false;
-
-    }
-
-});
-
-
-promptInput.addEventListener(
-    'keydown',
-    function(event)
-    {
-        if (
-            event.key === 'Enter'
-            &&
-            !event.shiftKey
-        ) {
-
-            event.preventDefault();
-
-            form.requestSubmit();
+            loadingMessage.style.display = 'none';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Ask AI';
+            isProcessing = false;
 
         }
-    }
-);
+
+    });
+
+    promptInput.addEventListener(
+        'keydown',
+        function(event)
+        {
+            if (
+                event.key === 'Enter'
+                &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+                form.requestSubmit();
+
+            }
+        }
+    );
+
+}
 
 
-function createChatCard(
-    prompt,
-    answer,
-    timestamp,
-    cardId = ''
-) {
-
+function createChatCard(prompt, answer, timestamp, cardId = '')
+{
     return `
-        <div class="chat-card" id="${cardId}">
+        <div id="${cardId}">
 
-            <div class="question">
-                <strong>You: </strong>
-                ${escapeHtml(prompt)}
+            <div class="message-row user-message">
+                <div class="message-bubble">
+                    ${escapeHtml(prompt)}
+                </div>
             </div>
 
-            <div class="answer">
-                <strong>Assistant:</strong>
-                <div class="answer-content">
-                ${answer}
-                </div>
-                <div class="chat-meta">
-                ${timestamp}
+            <div class="message-row assistant-message">
+                <div class="message-bubble">
+
+                    <div class="answer-content">
+                        ${answer}
+                    </div>
+
+                    <div class="chat-meta">
+                        ${timestamp}
+                    </div>
+
                 </div>
             </div>
 
         </div>
     `;
 }
+
+
 
 function escapeHtml(text)
 {
