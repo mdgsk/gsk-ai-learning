@@ -1,0 +1,179 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
+    padding: 16px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+h1,
+h2 {
+    margin-bottom: 10px;
+}
+
+.chat-form {
+    margin-bottom: 16px;
+}
+
+.chat-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: vertical;
+    font-size: 14px;
+}
+
+.chat-form button {
+    margin-top: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #2563eb;
+    color: #fff;
+    font-size: 14px;
+}
+
+.chat-form button:hover {
+    opacity: 0.9;
+}
+
+.current-answer {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid #ddd;
+}
+
+.current-answer pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: inherit;
+}
+
+.history-title {
+    margin-bottom: 10px;
+}
+
+.chat-card {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 6px;
+    margin-bottom: 10px;
+}
+
+.question {
+    background: #f1f5f9;
+    padding: 6px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+}
+
+.answer {
+    background: #eef7ff;
+    padding: 6px;
+    border-radius: 6px;
+    /* margin-bottom: 6px; */
+    font-size: 14px;
+}
+
+.answer pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: inherit;
+}
+
+/* .timestamp {
+    color: #666;
+    font-size: 12px;
+} */
+
+.current-conversation {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.loading-message {
+    display: none;
+    margin-top: 15px;
+    color: #2563eb;
+    font-weight: bold;
+}
+
+.chat-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.loading-message::before {
+    content: "⏳ ";
+}
+
+.answer h1,
+.answer h2,
+.answer h3 {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.answer ul {
+    padding-left: 20px;
+}
+
+.answer pre {
+    background: #1e1e1e;
+    color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+.answer code {
+    font-family: Consolas, monospace;
+}
+
+#response-container {
+    margin-top: 20px;
+}
+
+.success-message {
+    padding: 15px;
+    background: #eef7ff;
+    border: 1px solid #cfe2ff;
+    border-radius: 8px;
+}
+
+
+.error-message {
+    background: #ffe5e5;
+    border: 1px solid #ffb3b3;
+    color: #b30000;
+    border-radius: 6px;
+    margin-top: 4px;
+    margin-bottom: 6px;
+    padding: 6px;
+}
+
+
+.chat-meta {
+    margin-top: 5px;
+    font-size: 11px;
+    color: #888;
+}
